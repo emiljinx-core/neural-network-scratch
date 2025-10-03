@@ -79,27 +79,41 @@ st.markdown("""
         border-radius: 15px;
         box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
         margin-bottom: 20px;
-        display: inline-block;
     }
     
-    /* Make canvas toolbar buttons visible in dark mode */
-    div[class*="css"] button[title="Undo"],
-    div[class*="css"] button[title="Redo"] {
-        background-color: white !important;
-        border: 2px solid #3b82f6 !important;
-        color: #1e293b !important;
-        border-radius: 5px;
-        padding: 5px 10px;
+    /* Force remove ALL dark backgrounds around canvas */
+    .stCanvas,
+    canvas,
+    div[data-testid="stImage"],
+    div[data-testid="stImage"] > div,
+    div[class*="element-container"],
+    div[style*="display: flex"] {
+        background: transparent !important;
+        background-color: transparent !important;
     }
     
-    div[class*="css"] button[title="Undo"]:hover,
-    div[class*="css"] button[title="Redo"]:hover {
-        background-color: #3b82f6 !important;
-        color: white !important;
+    /* Target the specific canvas wrapper div */
+    canvas + div,
+    canvas ~ div {
+        background: transparent !important;
+        display: none !important;
     }
     
-    /* Hide delete/trash button from canvas */
-    button[title="Delete"] {
+    /* Hide any overlay divs */
+    div[style*="position: absolute"][style*="pointer-events"] {
+        background: transparent !important;
+    }
+    
+    /* Hide ALL canvas toolbar buttons */
+    button[title="Undo"],
+    button[title="Redo"],
+    button[title="Delete"],
+    button[title="Download"] {
+        display: none !important;
+    }
+    
+    /* Hide the entire toolbar */
+    div[class*="css"] > div[style*="position: absolute"] {
         display: none !important;
     }
     
@@ -219,14 +233,16 @@ if st.session_state.show_prediction and st.session_state.prediction_data is not 
         st.markdown("### 🎨 Draw Your Digit")
         
         canvas_result = st_canvas(
-            fill_color="rgba(255, 255, 255, 0)",
+            fill_color="white",
+            stroke_width=30,
+            stroke_color="black",
             background_color="white",
             update_streamlit=True,
-            height=400,
-            width=400,
+            height=500,
+            width=500,
             drawing_mode="freedraw",
             key=f"canvas_{st.session_state.canvas_key}",
-            display_toolbar=True,
+            display_toolbar=False,
         )
         st.markdown('</div>', unsafe_allow_html=True)
         
@@ -245,18 +261,19 @@ if st.session_state.show_prediction and st.session_state.prediction_data is not 
         # Show prediction
         pred_data = st.session_state.prediction_data
         
+        # Prediction result - reduced height to match canvas
         st.markdown(f"""
-        <div class="prediction-box">
-            <h2 style="color: white; margin: 0; font-size: 1.8rem;">Predicted Digit</h2>
-            <h1 style="color: white; font-size: 7rem; margin: 20px 0; font-weight: 900;">{int(pred_data['prediction'])}</h1>
-            <p style="color: white; font-size: 1.5rem; margin: 0;">Confidence: {pred_data['confidence']:.1f}%</p>
+        <div class="prediction-box" style="height: 200px; display: flex; flex-direction: column; justify-content: center;">
+            <h2 style="color: white; margin: 0; font-size: 1.5rem;">Predicted Digit</h2>
+            <h1 style="color: white; font-size: 5rem; margin: 10px 0; font-weight: 900;">{int(pred_data['prediction'])}</h1>
+            <p style="color: white; font-size: 1.2rem; margin: 0;">Confidence: {pred_data['confidence']:.1f}%</p>
         </div>
         """, unsafe_allow_html=True)
         
-        # Probability chart
+        # Probability chart - smaller to fit
         st.markdown('<div class="chart-container">', unsafe_allow_html=True)
         
-        fig, ax = plt.subplots(figsize=(10, 4))
+        fig, ax = plt.subplots(figsize=(10, 3.5))
         colors = ['#2563eb' if i == int(pred_data['prediction']) else '#60a5fa' for i in range(10)]
         bars = ax.bar(range(10), pred_data['probabilities'] * 100, color=colors, edgecolor='#1e40af', linewidth=2)
         
@@ -283,7 +300,7 @@ if st.session_state.show_prediction and st.session_state.prediction_data is not 
 
 else:
     # Centered canvas when no prediction
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2, col3 = st.columns([0.5, 3, 0.5])
     
     with col2:
         # Canvas
@@ -291,16 +308,16 @@ else:
         st.markdown("### 🎨 Draw Your Digit")
         
         canvas_result = st_canvas(
-            fill_color="rgba(255, 255, 255, 0)",
+            fill_color="white",
             stroke_width=20,
             stroke_color="black",
             background_color="white",
             update_streamlit=True,
-            height=400,
-            width=400,
+            height=280,
+            width=280,
             drawing_mode="freedraw",
             key=f"canvas_{st.session_state.canvas_key}",
-            display_toolbar=True,
+            display_toolbar=False,
         )
         st.markdown('</div>', unsafe_allow_html=True)
         
