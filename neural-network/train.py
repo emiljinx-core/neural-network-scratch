@@ -28,4 +28,4 @@ y_test = one_hot_encode(y_test, 10).T
 PARAMS = [X_train, y_train, X_test, y_test, "relu", 10, [512, 256]]
 nn_relu = NN(*PARAMS, optimizer="adam", l2_lambda=0.0001)
 nn_relu.fit(lr=0.001, epochs=100, batch_size=128)
-nn_relu.pickle_model("relu_optimized")
+nn_relu.pickle_model("fitted_model_relu_optimized")
