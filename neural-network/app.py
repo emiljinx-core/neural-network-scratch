@@ -141,7 +141,7 @@ st.markdown("""
 @st.cache_resource
 def load_model():
     try:
-        with open("fitted_model_relu_optimized.pickle", "rb") as f:
+        with open("neural-network/fitted_model_relu_optimized.pickle", "rb") as f:
             model = pickle.load(f)
         return model, True
     except FileNotFoundError:
